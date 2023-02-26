@@ -1,9 +1,12 @@
 import cors from 'cors';
 import crypto from 'crypto';
 import express from 'express';
+import fs from 'fs';
 
 const app = express();
-const messages = { status: 'success', data: [] };
+const messages = JSON.parse(
+	fs.readFileSync('messages.json', { encoding: 'utf-8' })
+);
 const PORT = process.env.PORT ?? 3000;
 const dateFormatOptions = {
 	year: 'numeric',
@@ -20,7 +23,11 @@ app.use(express.json());
 
 app
 	.route('/')
-	.get((req, res) => res.json(messages))
+	.get((req, res) => {
+		const data = fs.readFileSync('messages.json', { encoding: 'utf-8' });
+
+		res.json(JSON.parse(data));
+	})
 	.post((req, res) => {
 		const { author, txt } = req.body;
 		let moment = new Date().toLocaleDateString('en-US', dateFormatOptions);
@@ -36,6 +43,7 @@ app
 			txt,
 			moment
 		});
+		fs.writeFileSync('messages.json', JSON.stringify(messages));
 
 		res.sendStatus(200);
 	});
