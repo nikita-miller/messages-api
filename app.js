@@ -43,7 +43,7 @@ app
 			txt,
 			moment
 		});
-		fs.writeFileSync('messages.json', JSON.stringify(messages));
+		fs.writeFileSync('messages.json', JSON.stringify(messages, null, 4));
 
 		res.sendStatus(200);
 	});
