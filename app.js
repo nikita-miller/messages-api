@@ -4,9 +4,14 @@ import express from 'express';
 import fs from 'fs';
 
 const app = express();
+
+if (!fs.existsSync('messages.json')) {
+	fs.writeFileSync(JSON.stringify({ status: 'success', data: [] }, null, 4));
+}
 const messages = JSON.parse(
 	fs.readFileSync('messages.json', { encoding: 'utf-8' })
 );
+
 const PORT = process.env.PORT ?? 3000;
 const dateFormatOptions = {
 	year: 'numeric',
@@ -43,6 +48,7 @@ app
 			txt,
 			moment
 		});
+
 		fs.writeFileSync('messages.json', JSON.stringify(messages, null, 4));
 
 		res.sendStatus(200);
