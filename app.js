@@ -8,9 +8,10 @@ const app = express();
 if (!fs.existsSync('messages.json')) {
 	fs.writeFileSync(JSON.stringify({ status: 'success', data: [] }, null, 4));
 }
-const messages = JSON.parse(
+let messages = JSON.parse(
 	fs.readFileSync('messages.json', { encoding: 'utf-8' })
 );
+let readNeeded = false;
 
 const PORT = process.env.PORT ?? 3000;
 const dateFormatOptions = {
@@ -29,9 +30,14 @@ app.use(express.json());
 app
 	.route('/')
 	.get((req, res) => {
-		const data = fs.readFileSync('messages.json', { encoding: 'utf-8' });
+		if (readNeeded) {
+			messages = JSON.parse(
+				fs.readFileSync('messages.json', { encoding: 'utf-8' })
+			);
+			readNeeded = false;
+		}
 
-		res.json(JSON.parse(data));
+		res.json(messages);
 	})
 	.post((req, res) => {
 		const { author, txt } = req.body;
@@ -50,6 +56,7 @@ app
 		});
 
 		fs.writeFileSync('messages.json', JSON.stringify(messages, null, 4));
+		readNeeded = true;
 
 		res.sendStatus(200);
 	});
