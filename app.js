@@ -46,7 +46,7 @@ app
 		moment =
 			moment.substring(0, lastComma) +
 			moment.substring(lastComma + 1, moment.length);
-		moment.replace('\u202f', ' ');
+		moment = moment.replace('\u202f', ' ');
 
 		messages.data.push({
 			id: crypto.randomUUID(),
